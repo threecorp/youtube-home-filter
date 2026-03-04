@@ -1,0 +1,36 @@
+/*
+ * FOUC Prevention: Hide video renderers until filtering is complete.
+ * Injected at document_start so styles apply before DOM renders.
+ */
+
+/* Home / Channel page video cards */
+ytd-rich-item-renderer:not([data-yt-filtered]) {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+
+/* Search result video cards */
+ytd-video-renderer:not([data-yt-filtered]) {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+
+/* Sidebar recommendations (new component) */
+yt-lockup-view-model:not([data-yt-filtered]) {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+
+/* Reveal after filtering */
+ytd-rich-item-renderer[data-yt-filtered="show"],
+ytd-video-renderer[data-yt-filtered="show"],
+yt-lockup-view-model[data-yt-filtered="show"] {
+  opacity: 1;
+}
+
+/* Hide filtered-out videos */
+ytd-rich-item-renderer[data-yt-filtered="hide"],
+ytd-video-renderer[data-yt-filtered="hide"],
+yt-lockup-view-model[data-yt-filtered="hide"] {
+  display: none !important;
+}

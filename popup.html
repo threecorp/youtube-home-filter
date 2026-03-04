@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="title-row">
+      <h1>YouTube Video Filter</h1>
+      <label class="toggle">
+        <input type="checkbox" id="globalEnabled">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <!-- Filter Mode -->
+    <div class="filter-mode">
+      <span class="filter-mode-label">Hide video if filter not met:</span>
+      <div class="filter-mode-buttons">
+        <button id="modeOr" class="mode-btn active">Any</button>
+        <button id="modeAnd" class="mode-btn">All</button>
+      </div>
+    </div>
+    <p class="hint mode-hint" id="modeHint">Hide if ANY filter condition is not met</p>
+
+    <!-- View Count Filter -->
+    <section class="filter-section">
+      <div class="filter-header">
+        <label class="toggle">
+          <input type="checkbox" id="viewCountEnabled">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="filter-title">View Count Filter</span>
+      </div>
+      <div class="filter-body" id="viewCountBody">
+        <div class="field">
+          <label for="viewCountMin">Minimum views</label>
+          <input type="number" id="viewCountMin" min="0" value="0" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="viewCountMax">Maximum views</label>
+          <input type="number" id="viewCountMax" min="0" value="0" placeholder="0 = unlimited">
+        </div>
+        <p class="hint">Set max to 0 for unlimited.</p>
+      </div>
+    </section>
+
+    <!-- Publish Date Filter -->
+    <section class="filter-section">
+      <div class="filter-header">
+        <label class="toggle">
+          <input type="checkbox" id="publishDateEnabled">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="filter-title">Publish Date Filter</span>
+      </div>
+      <div class="filter-body" id="publishDateBody">
+        <div class="field">
+          <label for="publishDateMaxDays">Max days since published</label>
+          <input type="number" id="publishDateMaxDays" min="0" value="0" placeholder="0 = unlimited">
+        </div>
+        <p class="hint">E.g. 365 = show only videos from the past year. 0 = unlimited.</p>
+      </div>
+    </section>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
