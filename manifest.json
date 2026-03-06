@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Video Filter",
+  "name": "YouTube Home Filter",
   "version": "1.0.0",
   "description": "Filter YouTube videos by view count and publish date",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["*://*.youtube.com/*"],
+  "host_permissions": ["https://www.youtube.com/*"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -20,12 +20,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
+      "matches": ["https://www.youtube.com/*"],
       "css": ["content.css"],
       "run_at": "document_start"
     },
     {
-      "matches": ["*://*.youtube.com/*"],
+      "matches": ["https://www.youtube.com/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }

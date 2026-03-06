@@ -83,7 +83,7 @@ function saveSettings() {
     showStatus("Settings saved");
 
     // Notify content script in all YouTube tabs
-    chrome.tabs.query({ url: "*://*.youtube.com/*" }, (tabs) => {
+    chrome.tabs.query({ url: "https://www.youtube.com/*" }, (tabs) => {
       for (const tab of tabs) {
         try {
           chrome.tabs.sendMessage(
