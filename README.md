@@ -3,17 +3,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
 
-A Chrome extension that filters YouTube videos by **view count** and **publish date**. Hide low-quality or outdated content to focus on what matters.
+A Chrome extension that filters videos on the **YouTube home page** by **view count** and **publish date**. Hide low-quality or outdated content from your home feed to focus on what matters.
 
 ## Features
 
+- **Home Page Filtering** - Filters videos on the YouTube home feed only (does not affect search, watch, or channel pages)
 - **View Count Filter** - Set minimum/maximum view thresholds to hide unpopular or overly viral videos
 - **Publish Date Filter** - Hide videos older than a specified number of days
 - **Filter Modes** - Choose between "Any" (OR) and "All" (AND) logic for combining filters
 - **Multi-language Support** - Parses English and Japanese YouTube metadata (e.g., "1.2M views", "100万 回視聴")
 - **Real-time Filtering** - Videos are filtered as they load, including infinite scroll and SPA navigation
 - **FOUC Prevention** - Videos are hidden until filtering completes, so filtered content never flashes on screen
-- **Works Everywhere on YouTube** - Home page, search results, sidebar recommendations, and channel pages
 
 ## Screenshots
 
@@ -26,19 +26,13 @@ A Chrome extension that filters YouTube videos by **view count** and **publish d
 ### Visual comparison - filtered videos highlighted
 ![Visual comparison](docs/screenshots/03-youtube-home-filtered-visual.png)
 
-### Search results filtered by publish date (past year)
-![Search filtered](docs/screenshots/04-youtube-search-filtered-1year.png)
-
-### Sidebar recommendations filtered
-![Sidebar filtered](docs/screenshots/05-youtube-sidebar-filtered-1M.png)
-
 ## Installation
 
 Since this extension is not published on the Chrome Web Store, you can install it manually:
 
 1. Clone or download this repository:
    ```bash
-   git clone https://github.com/threecorp/youtube-video-filter.git
+   git clone https://github.com/threecorp/youtube-home-filter.git
    ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
@@ -65,16 +59,17 @@ Settings are saved automatically and synced across your Chrome devices.
 
 The extension uses a content script that:
 
-1. Observes YouTube's DOM for video elements (`ytd-rich-item-renderer`, `ytd-video-renderer`, `yt-lockup-view-model`)
-2. Extracts view count and publish date from each video's metadata
-3. Applies filter rules based on your settings
-4. Hides or shows videos using CSS `data-yt-filtered` attributes
-5. Listens for YouTube's SPA navigation events to re-filter on page transitions
+1. Detects when you are on the YouTube home page (`/`)
+2. Observes the DOM for video card elements (`ytd-rich-item-renderer`)
+3. Extracts view count and publish date from each video's metadata
+4. Applies filter rules based on your settings
+5. Hides or shows videos using CSS `data-yt-filtered` attributes
+6. Listens for YouTube's SPA navigation events to activate/deactivate filtering on page transitions
 
 ## Project Structure
 
 ```
-youtube-video-filter/
+youtube-home-filter/
 ├── manifest.json      # Chrome Extension manifest (Manifest V3)
 ├── background.js      # Service worker for cross-tab settings sync
 ├── content.js         # Main filtering logic injected into YouTube
