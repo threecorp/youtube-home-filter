@@ -14,6 +14,24 @@
 
   let settings = { ...DEFAULT_SETTINGS };
 
+  // ─── Home Page Detection ──────────────────────────────────────────
+
+  function isHomePage() {
+    return location.pathname === "/";
+  }
+
+  function activateFilter() {
+    document.documentElement.classList.add("yt-filter-active");
+  }
+
+  function deactivateFilter() {
+    document.documentElement.classList.remove("yt-filter-active");
+    // Remove all filter marks so videos display normally
+    document.querySelectorAll("[data-yt-filtered]").forEach((el) => {
+      el.removeAttribute("data-yt-filtered");
+    });
+  }
+
   // ─── View Count Parsing ───────────────────────────────────────────
 
   const VIEW_COUNT_MULTIPLIERS_EN = {
@@ -249,12 +267,8 @@
    * Filter all video elements on the page.
    */
   function filterAllVideos() {
-    const selectors = [
-      "ytd-rich-item-renderer",
-      "ytd-video-renderer",
-      "yt-lockup-view-model",
-    ];
-    const elements = document.querySelectorAll(selectors.join(","));
+    if (!isHomePage()) return;
+    const elements = document.querySelectorAll("ytd-rich-item-renderer");
     elements.forEach(filterElement);
   }
 
@@ -262,12 +276,12 @@
    * Re-filter: remove existing marks and re-apply.
    */
   function refilterAll() {
-    const selectors = [
-      "ytd-rich-item-renderer",
-      "ytd-video-renderer",
-      "yt-lockup-view-model",
-    ];
-    const elements = document.querySelectorAll(selectors.join(","));
+    if (!isHomePage()) {
+      deactivateFilter();
+      return;
+    }
+    activateFilter();
+    const elements = document.querySelectorAll("ytd-rich-item-renderer");
     elements.forEach((el) => {
       el.removeAttribute("data-yt-filtered");
       filterElement(el);
@@ -276,28 +290,19 @@
 
   // ─── MutationObserver ─────────────────────────────────────────────
 
-  const VIDEO_SELECTORS = new Set([
-    "YTD-RICH-ITEM-RENDERER",
-    "YTD-VIDEO-RENDERER",
-    "YT-LOCKUP-VIEW-MODEL",
-  ]);
-
   function handleMutations(mutations) {
+    if (!isHomePage()) return;
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (node.nodeType !== Node.ELEMENT_NODE) continue;
 
-        // Check if the added node itself is a video element
-        if (VIDEO_SELECTORS.has(node.tagName)) {
+        if (node.tagName === "YTD-RICH-ITEM-RENDERER") {
           filterElement(node);
           continue;
         }
 
-        // Check children
         const children = node.querySelectorAll
-          ? node.querySelectorAll(
-              "ytd-rich-item-renderer, ytd-video-renderer, yt-lockup-view-model"
-            )
+          ? node.querySelectorAll("ytd-rich-item-renderer")
           : [];
         children.forEach(filterElement);
       }
@@ -357,7 +362,10 @@
 
   async function init() {
     await loadSettings();
-    filterAllVideos();
+    if (isHomePage()) {
+      activateFilter();
+      filterAllVideos();
+    }
     startObserver();
   }
 
