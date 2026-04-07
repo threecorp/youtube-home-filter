@@ -14,6 +14,46 @@
 
   let settings = { ...DEFAULT_SETTINGS };
 
+  // ─── DOM Selectors ────────────────────────────────────────────────
+  // YouTube migrated class names from BEM (e.g. "foo-bar__baz-qux") to
+  // camelCase (e.g. "fooBarBazQux").  We define each selector once in
+  // BEM form and auto-derive the camelCase variant so both work.
+
+  /**
+   * Convert a BEM-style class name to its camelCase equivalent.
+   * e.g. "yt-content-metadata-view-model__metadata-row"
+   *    → "ytContentMetadataViewModelMetadataRow"
+   */
+  function bemToCamel(bemClass) {
+    return bemClass
+      .replace(/__/g, "-")
+      .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  /**
+   * Build a selector pair [camelCase, BEM] from a BEM class name.
+   */
+  function selectorPair(bemClass) {
+    return ["." + bemToCamel(bemClass), "." + bemClass];
+  }
+
+  const SELECTORS = {
+    metadataRow:  selectorPair("yt-content-metadata-view-model__metadata-row"),
+    metadataText: selectorPair("yt-content-metadata-view-model__metadata-text"),
+  };
+
+  /**
+   * Try each selector in order and return the first non-empty result.
+   * Falls back to an empty NodeList if none match.
+   */
+  function queryWithFallback(root, selectors) {
+    for (const selector of selectors) {
+      const result = root.querySelectorAll(selector);
+      if (result.length > 0) return result;
+    }
+    return root.querySelectorAll(selectors[0]); // empty NodeList
+  }
+
   // ─── Home Page Detection ──────────────────────────────────────────
 
   function isHomePage() {
@@ -150,15 +190,11 @@
     const metaView = element.querySelector("yt-content-metadata-view-model");
     if (!metaView) return null;
 
-    const rows = metaView.querySelectorAll(
-      ".yt-content-metadata-view-model__metadata-row"
-    );
+    const rows = queryWithFallback(metaView, SELECTORS.metadataRow);
     // Row 0 = channel name, Row 1 = view count + publish date
     if (rows.length < 2) return null;
 
-    const texts = rows[1].querySelectorAll(
-      ".yt-content-metadata-view-model__metadata-text"
-    );
+    const texts = queryWithFallback(rows[1], SELECTORS.metadataText);
     if (texts.length < 2) return null;
 
     return {
